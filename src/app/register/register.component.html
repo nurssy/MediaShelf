@@ -1,1 +1,102 @@
-<p>register works!</p>
+<div class="register-container">
+  <div class="register-content">
+    <img src="assets/loginphoto.png" alt="Register" class="register-image">
+    
+    <div class="register-form-section">
+      <h2 class="register-title">Hesap Oluşturun</h2>
+      <p class="register-subtitle">Yeni hesabınızı oluşturun</p>
+      
+      <form class="register-form">
+        <div class="form-group">
+          <label for="fullName" class="form-label">Ad Soyad</label>
+          <input 
+            type="text" 
+            id="fullName" 
+            name="fullName" 
+            class="form-input" 
+            placeholder="Ad ve soyadınızı girin"
+            [(ngModel)]="fullName"
+            required
+          >
+        </div>
+        
+        <div class="form-group">
+          <label for="email" class="form-label">E-posta</label>
+          <input 
+            type="email" 
+            id="email" 
+            name="email" 
+            class="form-input" 
+            placeholder="E-posta adresinizi girin"
+            [(ngModel)]="email"
+            required
+          >
+        </div>
+        
+        <div class="form-group">
+          <label for="username" class="form-label">Kullanıcı Adı</label>
+          <input 
+            type="text" 
+            id="username" 
+            name="username" 
+            class="form-input" 
+            placeholder="Kullanıcı adınızı girin"
+            [(ngModel)]="username"
+            required
+          >
+        </div>
+        
+        <div class="form-group">
+          <label for="password" class="form-label">Şifre</label>
+          <input 
+            type="password" 
+            id="password" 
+            name="password" 
+            class="form-input" 
+            placeholder="Şifrenizi girin"
+            [(ngModel)]="password"
+            required
+          >
+        </div>
+        
+        <div class="form-group">
+          <label for="confirmPassword" class="form-label">Şifre Tekrar</label>
+          <input 
+            type="password" 
+            id="confirmPassword" 
+            name="confirmPassword" 
+            class="form-input" 
+            placeholder="Şifrenizi tekrar girin"
+            [(ngModel)]="confirmPassword"
+            required
+          >
+        </div>
+        
+        <div class="form-options">
+          <label class="checkbox-container">
+            <input type="checkbox" [(ngModel)]="agreeTerms">
+            <span class="checkmark"></span>
+            <a href="#" class="terms-link">Kullanım şartlarını</a> kabul ediyorum
+          </label>
+        </div>
+          
+        <button type="submit" class="register-button">
+          <span *ngIf="!isLoading">Kayıt Ol</span>
+          <span *ngIf="isLoading" class="loading-spinner"></span>
+        </button>
+      </form>
+      
+      <div class="action-links">
+        <div class="login-link">
+          Zaten hesabınız var mı? <a href="/login">Giriş yapın</a>
+        </div>
+        <div class="home-link">
+          <a href="/" class="home-link-text">
+            <span class="home-icon">🏠</span>
+            Ana Sayfaya Dön
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
