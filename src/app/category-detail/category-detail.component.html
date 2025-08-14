@@ -1,0 +1,377 @@
+<div class="category-detail-page">
+  <!-- Star Menu Toggle -->
+  <div class="star-menu-toggle" [class.hidden]="isMenuOpen" (click)="toggleMenu()">
+    <div class="star-icon">⭐</div>
+  </div>
+
+  <!-- Sidebar Menu -->
+  <div class="sidebar-menu" [class.active]="isMenuOpen">
+    <div class="sidebar-header">
+      <div class="user-profile">
+        <div class="profile-avatar">👤</div>
+        <div class="user-info">
+          <h3>Hoş Geldiniz</h3>
+          <p>MediaShelf Kullanıcısı</p>
+        </div>
+      </div>
+      <button class="close-sidebar-btn" (click)="toggleMenu()">
+        <span class="close-icon">✕</span>
+      </button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section">
+        <h4>Ana Menü</h4>
+        <ul class="nav-list">
+          <li class="nav-item">
+            <span class="nav-icon">📚</span>
+            <span class="nav-text">Koleksiyonum</span>
+          </li>
+          <li class="nav-item">
+            <span class="nav-icon">⭐</span>
+            <span class="nav-text">Favoriler</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="nav-section">
+        <h4>Kategoriler</h4>
+        <ul class="nav-list">
+          <li class="nav-item">
+            <span class="nav-icon">📖</span>
+            <span class="nav-text">Kitaplar</span>
+          </li>
+          <li class="nav-item">
+            <span class="nav-icon">🎬</span>
+            <span class="nav-text">Filmler</span>
+          </li>
+          <li class="nav-item">
+            <span class="nav-icon">📺</span>
+            <span class="nav-text">Diziler</span>
+          </li>
+          <li class="nav-item active">
+            <span class="nav-icon">🎌</span>
+            <span class="nav-text">Anime</span>
+          </li>
+          <li class="nav-item">
+            <span class="nav-icon">🎵</span>
+            <span class="nav-text">Müzik</span>
+          </li>
+        </ul>
+        
+        <button class="add-category-btn">
+          <span class="btn-icon">➕</span>
+          <span class="btn-text">Kategori Ekle</span>
+        </button>
+      </div>
+
+      <div class="nav-section">
+        <h4>Ayarlar</h4>
+        <ul class="nav-list">
+          <li class="nav-item">
+            <span class="nav-icon">⚙️</span>
+            <span class="nav-text">Profil Ayarları</span>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="logout-btn">
+        <span class="btn-icon">🚪</span>
+        <span class="btn-text">Çıkış Yap</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content" [class.menu-open]="isMenuOpen">
+    <div class="content-header">
+      <div class="header-content">
+        <h1 class="page-title">Anime Listem</h1>
+      </div>
+      <p class="page-subtitle">Anime koleksiyonunuzu yönetin ve takip edin</p>
+    </div>
+
+    <div class="anime-content">
+      <!-- Anime List Section -->
+      <div class="anime-list-section">
+        <div class="section-header">
+          <h2>📺 Anime Koleksiyonum</h2>
+                     <div class="list-controls">
+      <!--      <button class="filter-btn">
+               <span class="btn-icon">🔍</span>
+               <span class="btn-text">Filtrele</span>
+             </button>-->
+             <button class="stats-btn" (click)="openStatsModal()">
+               <span class="btn-icon">📈</span>
+               <span class="btn-text">İstatistikler</span>
+             </button>
+             <button class="add-anime-btn" (click)="openAddAnimeModal()">
+               <span class="btn-icon">➕</span>
+               <span class="btn-text">Anime Ekle</span>
+             </button>
+           </div>
+        </div>
+
+        <!-- Anime Grid -->
+        <div class="anime-grid">
+          <!-- Empty State -->
+          <div class="empty-state" *ngIf="animeList.length === 0">
+            <div class="empty-icon">🎌</div>
+            <h3>Henüz anime eklenmemiş</h3>
+            <p>İlk anime'nizi eklemek için yukarıdaki "Anime Ekle" butonuna tıklayın</p>
+          </div>
+
+          <!-- Anime List -->
+          <div class="anime-list" *ngIf="animeList.length > 0">
+            <div class="anime-item" *ngFor="let anime of animeList; trackBy: trackByAnimeId">
+              <div class="anime-image-container">
+                <img [src]="anime.image" [alt]="anime.name" class="anime-image">
+                <div class="anime-overlay">
+                  <button class="remove-anime-btn" (click)="openDeleteModal(anime)" title="Anime'yi Sil">
+                    <span class="remove-icon">🗑️</span>
+                  </button>
+                </div>
+              </div>
+              <div class="anime-info">
+                <h4 class="anime-name">{{ anime.name }}</h4>
+                <div class="anime-rating">
+                  <span 
+                    *ngFor="let star of [1,2,3,4,5]; let i = index" 
+                    class="star-display" 
+                    [class.filled]="i < anime.rating"
+                  >
+                    ⭐
+                  </span>
+                  <span class="rating-score">{{ anime.rating }}/5</span>
+                </div>
+                <p class="anime-date">{{ anime.addedDate | date:'dd/MM/yyyy' }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Stats 
+      <div class="anime-stats">
+        <h2>📊 Anime İstatistikleri</h2>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon">📺</div>
+            <div class="stat-content">
+              <div class="stat-number">0</div>
+              <div class="stat-label">Toplam Anime</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">✅</div>
+            <div class="stat-content">
+              <div class="stat-number">0</div>
+              <div class="stat-label">Tamamlanan</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">⏳</div>
+            <div class="stat-content">
+              <div class="stat-number">0</div>
+              <div class="stat-label">İzlenen</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">⭐</div>
+            <div class="stat-content">
+              <div class="stat-number">0</div>
+              <div class="stat-label">Favori</div>
+            </div>
+          </div>
+        </div>
+      </div>-->
+    </div>
+  </div>
+
+  <!-- Background Stars -->
+  <div class="background-stars">
+    <div class="star star-1">⭐</div>
+    <div class="star star-2">✨</div>
+    <div class="star star-3">🌟</div>
+    <div class="star star-4">💫</div>
+    <div class="star star-5">⭐</div>
+    <div class="star star-6">✨</div>
+    <div class="star star-7">🌟</div>
+    <div class="star star-8">💫</div>
+    <div class="star star-9">⭐</div>
+    <div class="star star-10">✨</div>
+    <div class="star star-11">🌟</div>
+    <div class="star star-12">💫</div>
+    <div class="star star-13">⭐</div>
+    <div class="star star-14">✨</div>
+    <div class="star star-15">🌟</div>
+    <div class="star star-16">💫</div>
+    <div class="star star-17">⭐</div>
+    <div class="star star-18">✨</div>
+    <div class="star star-19">🌟</div>
+    <div class="star star-20">💫</div>
+  </div>
+
+  <!-- Anime Ekleme Modal -->
+  <div class="modal-overlay" *ngIf="isModalOpen" (click)="closeModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>🎌 Yeni Anime Ekle</h3>
+        <button class="modal-close-btn" (click)="closeModal()">
+          <span class="close-icon">✕</span>
+        </button>
+      </div>
+      
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="animeName">Anime Adı:</label>
+          <input 
+            type="text" 
+            id="animeName" 
+            [(ngModel)]="newAnime.name" 
+            placeholder="Anime adını girin..."
+            class="form-input"
+          >
+        </div>
+        
+        <div class="form-group">
+          <label for="animeImage">Anime Resmi:</label>
+          <div class="image-upload-area" (click)="triggerFileInput()">
+            <div class="upload-placeholder" *ngIf="!selectedImage">
+              <span class="upload-icon">📷</span>
+              <p>Resim yüklemek için tıklayın</p>
+              <small>JPG, PNG, GIF (Max: 5MB)</small>
+            </div>
+            <img *ngIf="selectedImage" [src]="selectedImage" alt="Seçilen resim" class="preview-image">
+            <input 
+              type="file" 
+              #fileInput
+              id="animeImage" 
+              (change)="onFileSelected($event)" 
+              accept="image/*"
+              style="display: none;"
+            >
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label>Puanınız:</label>
+          <div class="rating-stars">
+            <span 
+              *ngFor="let star of [1,2,3,4,5]; let i = index" 
+              class="star-rating" 
+              [class.filled]="i < newAnime.rating"
+              (click)="setRating(i + 1)"
+              title="{{ i + 1 }} yıldız"
+            >
+              ⭐
+            </span>
+            <span class="rating-text">{{ newAnime.rating > 0 ? newAnime.rating + '/5' : 'Henüz puanlanmadı' }}</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="closeModal()">İptal</button>
+        <button class="btn btn-primary" (click)="addAnime()" [disabled]="!newAnime.name || !selectedImage">
+          Anime Ekle
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- İstatistik Modal -->
+  <div class="modal-overlay" *ngIf="isStatsModalOpen" (click)="closeStatsModal()">
+    <div class="modal-content stats-modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>📊 Anime İstatistikleri</h3>
+        <button class="modal-close-btn" (click)="closeStatsModal()">
+          <span class="close-icon">✕</span>
+        </button>
+      </div>
+      
+      <div class="modal-body">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon">📺</div>
+            <div class="stat-content">
+              <div class="stat-number">{{ getAnimeCount() }}</div>
+              <div class="stat-label">Toplam Anime</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">✅</div>
+            <div class="stat-content">
+              <div class="stat-number">{{ getAnimeCount() }}</div>
+              <div class="stat-label">Koleksiyonda</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">⭐</div>
+            <div class="stat-content">
+              <div class="stat-number">{{ getAnimeCount() }}</div>
+              <div class="stat-label">Favori</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">📅</div>
+            <div class="stat-content">
+              <div class="stat-number">{{ getAnimeCount() > 0 ? '1' : '0' }}</div>
+              <div class="stat-label">Bu Ay Eklenen</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="stats-summary">
+          <h4>📈 Koleksiyon Özeti</h4>
+          <p *ngIf="getAnimeCount() === 0" class="no-anime-message">
+            Henüz anime eklenmemiş. İlk anime'nizi eklemek için "Anime Ekle" butonunu kullanın!
+          </p>
+          <p *ngIf="getAnimeCount() > 0" class="anime-summary">
+            Şu anda <strong>{{ getAnimeCount() }}</strong> anime koleksiyonunuzda bulunuyor. 
+            Koleksiyonunuzu büyütmeye devam edin! 🎌✨
+          </p>
+        </div>
+      </div>
+      
+      <div class="modal-footer">
+        <button class="btn btn-primary" (click)="closeStatsModal()">Kapat</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Silme Onay Modal -->
+  <div class="modal-overlay" *ngIf="isDeleteModalOpen" (click)="closeDeleteModal()">
+    <div class="modal-content delete-modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>🗑️ Anime Silme Onayı</h3>
+        <button class="modal-close-btn" (click)="closeDeleteModal()">
+          <span class="close-icon">✕</span>
+        </button>
+      </div>
+      
+      <div class="modal-body">
+        <div class="delete-warning">
+          <div class="warning-icon">⚠️</div>
+          <h4>Bu anime'yi silmek istediğinizden emin misiniz?</h4>
+          <p class="anime-to-delete">
+            <strong>{{ animeToDelete?.name }}</strong> koleksiyonunuzdan kalıcı olarak silinecek.
+          </p>
+          <p class="delete-note">
+            Bu işlem geri alınamaz ve anime'nin tüm bilgileri kaybolacaktır.
+          </p>
+        </div>
+      </div>
+      
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="closeDeleteModal()">İptal</button>
+        <button class="btn btn-danger" (click)="confirmDelete()">
+          <span class="btn-icon">🗑️</span>
+          Evet, Sil
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
