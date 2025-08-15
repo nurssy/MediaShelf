@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { toast } from 'ngx-sonner';
 
 @Component({
   selector: 'app-login',
@@ -17,12 +18,12 @@ export class LoginComponent {
 
   onLogin() {
     if (!this.username || !this.password) {
-      alert('Lütfen kullanıcı adı ve şifre giriniz!');
+      toast.error('Lütfen kullanıcı adı ve şifre giriniz!');
       return;
     }
 
     this.isLoading = true;
-    
+
     // Simüle edilmiş login işlemi
     setTimeout(() => {
       console.log('Login attempt:', {
@@ -30,10 +31,10 @@ export class LoginComponent {
         password: this.password,
         rememberMe: this.rememberMe
       });
-      
+
       // Burada gerçek API çağrısı yapılacak
-      alert(`Hoş geldiniz, ${this.username}!`);
-      
+      toast.success(`Hoş geldiniz, ${this.username}!`);
+
       this.isLoading = false;
     }, 1500);
   }

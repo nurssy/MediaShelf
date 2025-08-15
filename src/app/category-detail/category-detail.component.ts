@@ -1,6 +1,7 @@
 import { Component, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { toast } from 'ngx-sonner';
 
 interface Anime {
   id: number;
@@ -94,13 +95,13 @@ export class CategoryDetailComponent {
     if (file) {
       // Dosya boyutu kontrolü (5MB)
       if (file.size > 5 * 1024 * 1024) {
-        alert('Dosya boyutu 5MB\'dan büyük olamaz!');
+        toast.error('Dosya boyutu 5MB\'dan büyük olamaz!');
         return;
       }
 
       // Dosya tipi kontrolü
       if (!file.type.startsWith('image/')) {
-        alert('Lütfen geçerli bir resim dosyası seçin!');
+        toast.error('Lütfen geçerli bir resim dosyası seçin!');
         return;
       }
 
@@ -117,7 +118,7 @@ export class CategoryDetailComponent {
 
   addAnime() {
     if (!this.newAnime.name.trim() || !this.newAnime.image) {
-      alert('Lütfen anime adı ve resim ekleyin!');
+      toast.error('Lütfen anime adı ve resim ekleyin!');
       return;
     }
 
@@ -135,7 +136,7 @@ export class CategoryDetailComponent {
 
     // Başarılı ekleme sonrası modal kapat
     this.closeModal();
-    alert('Anime başarıyla eklendi!');
+    toast.success('Anime başarıyla eklendi!');
   }
 
   removeAnime(animeId: number) {
