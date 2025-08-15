@@ -1,14 +1,8 @@
-import { Component, ViewChild, ElementRef } from '@angular/core';
+import { Component, ViewChild, ElementRef, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
-interface Anime {
-  id: number;
-  name: string;
-  image: string;
-  addedDate: Date;
-  rating: number;
-}
+import { ActivatedRoute, Router } from '@angular/router';
+import { CategoryService, Category, MediaItem } from '../services/category.service';
 
 @Component({
   selector: 'app-category-detail',
@@ -17,7 +11,7 @@ interface Anime {
   templateUrl: './category-detail.component.html',
   styleUrl: './category-detail.component.css'
 })
-export class CategoryDetailComponent {
+export class CategoryDetailComponent implements OnInit {
   @ViewChild('fileInput') fileInput!: ElementRef;
   
   isMenuOpen = false;
@@ -25,21 +19,48 @@ export class CategoryDetailComponent {
   isStatsModalOpen = false;
   isDeleteModalOpen = false;
   selectedImage: string | null = null;
-  newAnime = {
+  newMediaItem: MediaItem = {
     name: '',
-    image: null as File | null,
+    image: null,
     rating: 0
   };
   
-  animeList: Anime[] = [];
-  nextId = 1;
-  animeToDelete: Anime | null = null;
+  currentCollection: Category | null = null;
+  collections: Category[] = [];
+  mediaItemToDelete: MediaItem | null = null;
+
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private categoryService: CategoryService
+  ) {}
+
+  ngOnInit() {
+    this.loadCategories();
+    this.route.params.subscribe(params => {
+      const categoryId = params['id'];
+      this.currentCollection = this.collections.find(c => c._id === categoryId) || null;
+      
+      if (!this.currentCollection) {
+        // If collection not found, redirect to user page
+        this.router.navigate(['/user']);
+        return;
+      }
+    });
+  }
+
+  loadCategories() {
+    this.categoryService.getCategories().subscribe({
+      next: data => this.collections = data,
+      error: err => console.error(err)
+    });
+  }
 
   toggleMenu() {
     this.isMenuOpen = !this.isMenuOpen;
   }
 
-  openAddAnimeModal() {
+  openAddMediaModal() {
     this.isModalOpen = true;
     this.resetForm();
   }
@@ -57,32 +78,34 @@ export class CategoryDetailComponent {
     this.isStatsModalOpen = false;
   }
 
-  openDeleteModal(anime: Anime) {
-    this.animeToDelete = anime;
+  openDeleteModal(mediaItem: MediaItem) {
+    this.mediaItemToDelete = mediaItem;
     this.isDeleteModalOpen = true;
   }
 
   closeDeleteModal() {
     this.isDeleteModalOpen = false;
-    this.animeToDelete = null;
+    this.mediaItemToDelete = null;
   }
 
   confirmDelete() {
-    if (this.animeToDelete) {
-      this.removeAnime(this.animeToDelete.id);
+    if (this.mediaItemToDelete && this.currentCollection?._id) {
+      this.removeMediaItem(this.mediaItemToDelete._id!);
       this.closeDeleteModal();
     }
   }
 
   resetForm() {
-    this.newAnime.name = '';
+    this.newMediaItem = {
+      name: '',
+      image: null,
+      rating: 0
+    };
     this.selectedImage = null;
-    this.newAnime.image = null;
-    this.newAnime.rating = 0;
   }
 
   setRating(rating: number) {
-    this.newAnime.rating = rating;
+    this.newMediaItem.rating = rating;
   }
 
   triggerFileInput() {
@@ -104,49 +127,91 @@ export class CategoryDetailComponent {
         return;
       }
 
-      this.newAnime.image = file;
-      
       // Resim önizlemesi
       const reader = new FileReader();
       reader.onload = (e: any) => {
         this.selectedImage = e.target.result;
+        this.newMediaItem.image = e.target.result;
       };
       reader.readAsDataURL(file);
     }
   }
 
-  addAnime() {
-    if (!this.newAnime.name.trim() || !this.newAnime.image) {
-      alert('Lütfen anime adı ve resim ekleyin!');
+  addMediaItem() {
+    if (!this.newMediaItem.name.trim() || !this.newMediaItem.image || !this.currentCollection?._id) {
+      alert('Lütfen tüm alanları doldurun!');
       return;
     }
 
-    // Yeni anime oluştur
-    const newAnimeItem: Anime = {
-      id: this.nextId++,
-      name: this.newAnime.name.trim(),
-      image: this.selectedImage!,
-      addedDate: new Date(),
-      rating: this.newAnime.rating
-    };
-
-    // Anime listesine ekle
-    this.animeList.push(newAnimeItem);
-
-    // Başarılı ekleme sonrası modal kapat
-    this.closeModal();
-    alert('Anime başarıyla eklendi!');
+    this.categoryService.addMediaItem(this.currentCollection._id, this.newMediaItem).subscribe({
+      next: (updatedCategory) => {
+        // Update the current collection with new data
+        this.currentCollection = updatedCategory;
+        // Update the collections array
+        const index = this.collections.findIndex(c => c._id === updatedCategory._id);
+        if (index !== -1) {
+          this.collections[index] = updatedCategory;
+        }
+        
+        this.closeModal();
+        alert(`${this.currentCollection.name} başarıyla eklendi!`);
+      },
+      error: err => {
+        console.error(err);
+        alert('İçerik eklenirken bir hata oluştu!');
+      }
+    });
   }
 
-  removeAnime(animeId: number) {
-    this.animeList = this.animeList.filter(anime => anime.id !== animeId);
+  removeMediaItem(itemId: string) {
+    if (!this.currentCollection?._id) return;
+    
+    this.categoryService.deleteMediaItem(this.currentCollection._id, itemId).subscribe({
+      next: (updatedCategory) => {
+        // Update the current collection with new data
+        this.currentCollection = updatedCategory;
+        // Update the collections array
+        const index = this.collections.findIndex(c => c._id === updatedCategory._id);
+        if (index !== -1) {
+          this.collections[index] = updatedCategory;
+        }
+      },
+      error: err => {
+        console.error(err);
+        alert('İçerik silinirken bir hata oluştu!');
+      }
+    });
   }
 
-  getAnimeCount() {
-    return this.animeList.length;
+  getMediaCount() {
+    return this.currentCollection?.items.length || 0;
   }
 
-  trackByAnimeId(index: number, anime: Anime): number {
-    return anime.id;
+  trackByMediaId(index: number, item: MediaItem): string {
+    return item._id!;
+  }
+
+  navigateToCategory(collectionId: string) {
+    this.router.navigate(['/category', collectionId]);
+  }
+
+  navigateToUser() {
+    this.router.navigate(['/user']);
+  }
+
+  trackByCollectionId(index: number, collection: Category): string {
+    return collection._id!;
+  }
+
+  getFavoritesCount(): number {
+    return this.currentCollection?.items.filter(item => item.rating >= 4).length || 0;
+  }
+
+  getAverageRating(): number {
+    const items = this.currentCollection?.items || [];
+    if (items.length === 0) return 0;
+    
+    const totalRating = items.reduce((sum, item) => sum + item.rating, 0);
+    return Math.round((totalRating / items.length) * 10) / 10;
   }
 }

@@ -366,12 +366,103 @@ body {
 /* Stats Section */
 .stats-section h2,
 .activity-section h2,
-.actions-section h2 {
+.actions-section h2,
+.collections-section h2 {
   font-size: 1.4rem;
   font-weight: 600;
   margin-bottom: 15px;
   color: #ffffff;
   font-family: 'Arial', 'Helvetica', sans-serif;
+}
+
+/* Collections Section */
+.collections-section {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  padding: 30px;
+  margin-bottom: 30px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.collections-section h2 {
+  color: #ffffff;
+  margin-bottom: 25px;
+  font-size: 1.8rem;
+  text-align: center;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.collections-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.collection-card {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(15px);
+  border-radius: 15px;
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.collection-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.collection-icon {
+  font-size: 2.5rem;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.collection-info {
+  flex: 1;
+}
+
+.collection-name {
+  color: #ffffff;
+  font-size: 1.2rem;
+  margin-bottom: 5px;
+  font-weight: 600;
+}
+
+.collection-count {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.9rem;
+}
+
+.collection-card .delete-collection-btn {
+  background: rgba(255, 0, 0, 0.2);
+  border: 1px solid rgba(255, 0, 0, 0.3);
+  border-radius: 8px;
+  padding: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  opacity: 0.7;
+}
+
+.collection-card .delete-collection-btn:hover {
+  background: rgba(255, 0, 0, 0.4);
+  opacity: 1;
+  transform: scale(1.1);
 }
 
 .stats-grid {
@@ -899,6 +990,21 @@ body {
     gap: 12px;
   }
 
+  .collections-grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+  }
+
+  .collection-card {
+    padding: 15px;
+  }
+
+  .collection-icon {
+    width: 50px;
+    height: 50px;
+    font-size: 2rem;
+  }
+
   .close-sidebar-btn {
     top: 15px;
     right: 15px;
@@ -962,6 +1068,21 @@ body {
     gap: 10px;
   }
 
+  .collections-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .collection-card {
+    padding: 12px;
+  }
+
+  .collection-icon {
+    width: 45px;
+    height: 45px;
+    font-size: 1.8rem;
+  }
+
   .close-sidebar-btn {
     top: 10px;
     right: 10px;
@@ -991,7 +1112,8 @@ body {
 
   .stats-section h2,
   .activity-section h2,
-  .actions-section h2 {
+  .actions-section h2,
+  .collections-section h2 {
     font-size: 1.2rem;
     margin-bottom: 10px;
   }

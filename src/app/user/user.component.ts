@@ -1,105 +1,108 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-
-interface Collection {
-  id: number;
-  name: string;
-  icon: string;
-  createdDate: Date;
-}
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { CategoryService, Category } from '../services/category.service';
+import { CommonModule } from '@angular/common'; // <-- EKLENDİ
+import { FormsModule } from '@angular/forms';   // <-- ngModel için gerekli
 
 @Component({
   selector: 'app-user',
-  standalone: true,
-  imports: [CommonModule, FormsModule],
+  standalone: true,   // Eğer standalone component ise
+  imports: [CommonModule, FormsModule],  // <-- NGIf, NGFor, ngModel için
   templateUrl: './user.component.html',
-  styleUrl: './user.component.css'
+  styleUrls: ['./user.component.css']
 })
-export class UserComponent {
+export class UserComponent implements OnInit {
+  collections: Category[] = [];
+  newCollection: Partial<Category> = { name: '' };
+  collectionToDelete: Category | null = null;
+
   isMenuOpen = false;
   isCollectionModalOpen = false;
   isDeleteCollectionModalOpen = false;
-  
-  collections: Collection[] = [
-    { id: 1, name: 'Kitaplar', icon: '📖', createdDate: new Date() },
-    { id: 2, name: 'Filmler', icon: '🎬', createdDate: new Date() },
-    { id: 3, name: 'Diziler', icon: '📺', createdDate: new Date() },
-    { id: 4, name: 'Anime', icon: '🎌', createdDate: new Date() },
-    { id: 5, name: 'Müzik', icon: '🎵', createdDate: new Date() }
-  ];
-  
-  nextId = 6;
-  collectionToDelete: Collection | null = null;
-  
-  newCollection = {
-    name: '',
-    icon: ''
-  };
-  
-  availableIcons = ['📚', '📖', '🎬', '📺', '🎌', '🎵', '🎮', '🎨', '🏃', '🍳', '✈️', '🏠', '💻', '📱', '🎭', '🎪', '🏛️', '🌍', '🚗', '🚲'];
 
-  toggleMenu() {
+  
+
+  constructor(
+    private categoryService: CategoryService,
+    private router: Router
+  ) {}
+
+  ngOnInit(): void {
+    this.loadCategories();
+  }
+
+  loadCategories(): void {
+    this.categoryService.getCategories().subscribe({
+      next: (data) => {
+        this.collections = data;
+      },
+      error: (err) => {
+        console.error('Kategori listesi yüklenemedi', err);
+      }
+    });
+  }
+
+  toggleMenu(): void {
     this.isMenuOpen = !this.isMenuOpen;
   }
 
-  openCollectionModal() {
+  openCollectionModal(): void {
+    this.newCollection = { name: '' };
     this.isCollectionModalOpen = true;
-    this.resetCollectionForm();
   }
 
-  closeCollectionModal() {
+  closeCollectionModal(): void {
     this.isCollectionModalOpen = false;
-    this.resetCollectionForm();
   }
 
-  resetCollectionForm() {
-    this.newCollection.name = '';
-    this.newCollection.icon = '';
-  }
 
-  selectIcon(icon: string) {
-    this.newCollection.icon = icon;
-  }
+  addCollection(): void {
+    if (!this.newCollection.name?.trim() ) return;
 
-  addCollection() {
-    if (!this.newCollection.name.trim() || !this.newCollection.icon) {
-      return;
-    }
-
-    const newCollectionItem: Collection = {
-      id: this.nextId++,
+    const newCat: Category = {
       name: this.newCollection.name.trim(),
-      icon: this.newCollection.icon,
-      createdDate: new Date()
+      items: []
     };
 
-    this.collections.push(newCollectionItem);
-    this.closeCollectionModal();
+    this.categoryService.createCategory(newCat).subscribe({
+      next: () => {
+        this.loadCategories();
+        this.closeCollectionModal();
+      },
+      error: (err) => {
+        console.error('Kategori eklenemedi', err);
+      }
+    });
   }
 
-  openDeleteCollectionModal(collection: Collection) {
+  openDeleteCollectionModal(collection: Category): void {
     this.collectionToDelete = collection;
     this.isDeleteCollectionModalOpen = true;
   }
 
-  closeDeleteCollectionModal() {
+  closeDeleteCollectionModal(): void {
     this.isDeleteCollectionModalOpen = false;
-    this.collectionToDelete = null;
   }
 
-  confirmDeleteCollection() {
-    if (this.collectionToDelete) {
-      this.removeCollection(this.collectionToDelete.id);
-      this.closeDeleteCollectionModal();
-    }
+  confirmDeleteCollection(): void {
+    if (!this.collectionToDelete?._id) return;
+
+    this.categoryService.deleteCategory(this.collectionToDelete._id).subscribe({
+      next: () => {
+        this.loadCategories();
+        this.closeDeleteCollectionModal();
+      },
+      error: (err) => {
+        console.error('Kategori silinemedi', err);
+      }
+    });
   }
 
-  removeCollection(collectionId: number) {
-    this.collections = this.collections.filter(collection => collection.id !== collectionId);
+  navigateToCategory(categoryId: string): void {
+    this.router.navigate(['/category', categoryId]);
   }
 
-  trackByCollectionId(index: number, collection: Collection): number {
-    return collection.id;
+  trackByCollectionId(index: number, item: Category): string {
+    return item._id || index.toString();
   }
 }
