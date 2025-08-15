@@ -6,7 +6,7 @@
       <h2 class="register-title">Hesap Oluşturun</h2>
       <p class="register-subtitle">Yeni hesabınızı oluşturun</p>
       
-      <form class="register-form">
+      <form class="register-form" (ngSubmit)="onRegister()">
         <div class="form-group">
           <label for="fullName" class="form-label">Ad Soyad</label>
           <input 
@@ -74,7 +74,7 @@
         
         <div class="form-options">
           <label class="checkbox-container">
-            <input type="checkbox" [(ngModel)]="agreeTerms">
+            <input type="checkbox" name="agreeTerms" [(ngModel)]="agreeTerms">
             <span class="checkmark"></span>
             <a href="#" class="terms-link">Kullanım şartlarını</a> kabul ediyorum
           </label>

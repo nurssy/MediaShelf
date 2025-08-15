@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { RouterModule } from '@angular/router';
+import { toast } from 'ngx-sonner';
 
 @Component({
   selector: 'app-register',
@@ -22,21 +23,19 @@ export class RegisterComponent {
 
   constructor(private router: Router) {}
 
- 
-
   onRegister() {
     if (!this.fullName || !this.email || !this.username || !this.password || !this.confirmPassword) {
-      alert('Lütfen tüm alanları doldurunuz!');
+      toast.error('Lütfen tüm alanları doldurunuz!');
       return;
     }
 
     if (this.password !== this.confirmPassword) {
-      alert('Şifreler eşleşmiyor!');
+      toast.error('Şifreler eşleşmiyor!');
       return;
     }
 
     if (!this.agreeTerms) {
-      alert('Kullanım şartlarını kabul etmelisiniz!');
+      toast.error('Kullanım şartlarını kabul etmelisiniz!');
       return;
     }
 
@@ -53,7 +52,7 @@ export class RegisterComponent {
       });
       
       // Burada gerçek API çağrısı yapılacak
-      alert(`Hoş geldiniz, ${this.fullName}! Kayıt işleminiz başarıyla tamamlandı.`);
+      toast.success(`Hoş geldiniz, ${this.fullName}! Kayıt işleminiz başarıyla tamamlandı.`);
       
       this.isLoading = false;
       
