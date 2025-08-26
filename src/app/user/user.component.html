@@ -26,15 +26,7 @@
         <ul class="nav-list">
           <li class="nav-item">
             <span class="nav-icon">📚</span>
-            <span class="nav-text">Koleksiyonum</span>
-          </li>
-        <!--  <li class="nav-item">
-            <span class="nav-icon">🔍</span>
-            <span class="nav-text">Arama</span>
-          </li> -->
-          <li class="nav-item">
-            <span class="nav-icon">⭐</span>
-            <span class="nav-text">Favoriler</span>
+            <span class="nav-text" (click)="goToUser()" style="cursor: pointer;">Koleksiyonum</span>
           </li>
         </ul>
       </div>
@@ -42,10 +34,16 @@
       <div class="nav-section">
         <h4>Kategoriler</h4>
         <ul class="nav-list">
-          <li class="nav-item" *ngFor="let collection of collections; trackBy: trackByCollectionId" (click)="navigateToCategory(collection._id!)" style="cursor: pointer;">
+          <li class="nav-item" 
+              *ngFor="let collection of collections; trackBy: trackByCollectionId" 
+              (click)="navigateToCategory(collection._id!)" 
+              style="cursor: pointer;">
             <span class="nav-icon">📚</span>
             <span class="nav-text">{{ collection.name }}</span>
-            <button class="delete-collection-btn" (click)="openDeleteCollectionModal(collection); $event.stopPropagation()" title="Kategoriyi Sil">
+            <p class="collection-count"> ( {{ collection.items.length }} içerik )</p>
+            <button class="delete-collection-btn" 
+                    (click)="openDeleteCollectionModal(collection); $event.stopPropagation()" 
+                    title="Kategoriyi Sil">
               <span class="delete-icon">🗑️</span>
             </button>
           </li>
@@ -84,92 +82,83 @@
     </div>
 
     <div class="content-grid">
-      
-
       <!-- Collections Grid -->
       <div class="collections-section">
         <h2>📚 Koleksiyonlarım</h2>
         <div class="collections-grid">
-          <div class="collection-card" *ngFor="let collection of collections; trackBy: trackByCollectionId" (click)="navigateToCategory(collection._id!)">
+          <div class="collection-card" 
+               *ngFor="let collection of collections; trackBy: trackByCollectionId" 
+               (click)="navigateToCategory(collection._id!)">
             <div class="collection-icon">📚</div>
             <div class="collection-info">
               <h3 class="collection-name">{{ collection.name }}</h3>
               <p class="collection-count">{{ collection.items.length }} içerik</p>
             </div>
-            <button class="delete-collection-btn" (click)="openDeleteCollectionModal(collection); $event.stopPropagation()" title="Kategoriyi Sil">
+            <button class="delete-collection-btn" 
+                    (click)="openDeleteCollectionModal(collection); $event.stopPropagation()" 
+                    title="Kategoriyi Sil">
               <span class="delete-icon">🗑️</span>
             </button>
           </div>
         </div>
       </div>
-
-
-      
     </div>
   </div>
 
- <!-- Koleksiyon Ekleme Modal -->
-<div class="modal-overlay" *ngIf="isCollectionModalOpen" (click)="closeCollectionModal()">
-  <div class="modal-content" (click)="$event.stopPropagation()">
-    <div class="modal-header">
-      <h3>📚 Yeni Koleksiyon Ekle</h3>
-      <button class="modal-close-btn" (click)="closeCollectionModal()">
-        <span class="close-icon">✕</span>
-      </button>
-    </div>
-    
-    <div class="modal-body">
-      <div class="form-group">
-        <label for="collectionName">Koleksiyon Adı:</label>
-        <input 
-          type="text" 
-          id="collectionName" 
-          [(ngModel)]="newCollection.name" 
-          placeholder="Koleksiyon adını girin..."
-          class="form-input"
-        >
+  <!-- Koleksiyon Ekleme Modal -->
+  <div class="modal-overlay" *ngIf="isCollectionModalOpen" (click)="closeCollectionModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>📚 Yeni Koleksiyon Ekle</h3>
+        <button class="modal-close-btn" (click)="closeCollectionModal()">
+          <span class="close-icon">✕</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="collectionName">Koleksiyon Adı:</label>
+          <input type="text" 
+                 id="collectionName" 
+                 [(ngModel)]="newCollection.name" 
+                 placeholder="Koleksiyon adını girin..."
+                 class="form-input">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="closeCollectionModal()">İptal</button>
+        <button class="btn btn-primary" (click)="addCollection()" [disabled]="!newCollection.name?.trim()">Koleksiyon Ekle</button>
       </div>
     </div>
-    
-    <div class="modal-footer">
-      <button class="btn btn-secondary" (click)="closeCollectionModal()">İptal</button>
-      <button class="btn btn-primary" (click)="addCollection()" [disabled]="!newCollection.name?.trim()">
-        Koleksiyon Ekle
-      </button>
-    </div>
   </div>
-</div>
 
-<!-- Koleksiyon Silme Onay Modal -->
-<div class="modal-overlay" *ngIf="isDeleteCollectionModalOpen" (click)="closeDeleteCollectionModal()">
-  <div class="modal-content delete-modal" (click)="$event.stopPropagation()">
-    <div class="modal-header">
-      <h3>🗑️ Kategori Silme Onayı</h3>
-      <button class="modal-close-btn" (click)="closeDeleteCollectionModal()">
-        <span class="close-icon">✕</span>
-      </button>
-    </div>
-    
-    <div class="modal-body">
-      <div class="delete-warning">
-        <div class="warning-icon">⚠️</div>
-        <h4>Bu kategoriyi silmek istediğinizden emin misiniz?</h4>
-        <p class="collection-to-delete">
-          <strong>{{ collectionToDelete?.name }}</strong> kategorinizden kalıcı olarak silinecek.
-        </p>
-        <p class="delete-note">
-          Bu işlem geri alınamaz ve kategorinin tüm bilgileri kaybolacaktır.
-        </p>
+  <!-- Koleksiyon Silme Onay Modal -->
+  <div class="modal-overlay" *ngIf="isDeleteCollectionModalOpen" (click)="closeDeleteCollectionModal()">
+    <div class="modal-content delete-modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>🗑️ Kategori Silme Onayı</h3>
+        <button class="modal-close-btn" (click)="closeDeleteCollectionModal()">
+          <span class="close-icon">✕</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="delete-warning">
+          <div class="warning-icon">⚠️</div>
+          <h4>Bu kategoriyi silmek istediğinizden emin misiniz?</h4>
+          <p class="collection-to-delete">
+            <strong>{{ collectionToDelete?.name }}</strong> kategorinizden kalıcı olarak silinecek.
+          </p>
+          <p class="delete-note">
+            Bu işlem geri alınamaz ve kategorinin tüm bilgileri kaybolacaktır.
+          </p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="closeDeleteCollectionModal()">İptal</button>
+        <button class="btn btn-danger" (click)="confirmDeleteCollection()">
+          <span class="btn-icon">🗑️</span>
+          Evet, Sil
+        </button>
       </div>
     </div>
-    
-    <div class="modal-footer">
-      <button class="btn btn-secondary" (click)="closeDeleteCollectionModal()">İptal</button>
-      <button class="btn btn-danger" (click)="confirmDeleteCollection()">
-        <span class="btn-icon">🗑️</span>
-        Evet, Sil
-      </button>
-    </div>
   </div>
-</div>
 </div>

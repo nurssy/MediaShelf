@@ -36,18 +36,22 @@ export class CategoryDetailComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.loadCategories();
     this.route.params.subscribe(params => {
       const categoryId = params['id'];
-      this.currentCollection = this.collections.find(c => c._id === categoryId) || null;
-      
-      if (!this.currentCollection) {
-        // If collection not found, redirect to user page
-        this.router.navigate(['/user']);
-        return;
-      }
+  
+      this.categoryService.getCategories().subscribe({
+        next: data => {
+          this.collections = data;
+          this.currentCollection = this.collections.find(c => c._id === categoryId) || null;
+          if (!this.currentCollection) {
+            this.router.navigate(['/user']);
+          }
+        },
+        error: err => this.router.navigate(['/user'])
+      });
     });
   }
+  
 
   loadCategories() {
     this.categoryService.getCategories().subscribe({
@@ -213,5 +217,8 @@ export class CategoryDetailComponent implements OnInit {
     
     const totalRating = items.reduce((sum, item) => sum + item.rating, 0);
     return Math.round((totalRating / items.length) * 10) / 10;
+  }
+  goToUser(): void {
+    this.router.navigate(['/user']);
   }
 }

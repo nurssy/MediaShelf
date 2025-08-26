@@ -1,13 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CategoryService, Category } from '../services/category.service';
-import { CommonModule } from '@angular/common'; // <-- EKLENDİ
-import { FormsModule } from '@angular/forms';   // <-- ngModel için gerekli
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router'; // <-- BUNU EKLE
 
 @Component({
   selector: 'app-user',
-  standalone: true,   // Eğer standalone component ise
-  imports: [CommonModule, FormsModule],  // <-- NGIf, NGFor, ngModel için
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './user.component.html',
   styleUrls: ['./user.component.css']
 })
@@ -19,8 +20,6 @@ export class UserComponent implements OnInit {
   isMenuOpen = false;
   isCollectionModalOpen = false;
   isDeleteCollectionModalOpen = false;
-
-  
 
   constructor(
     private categoryService: CategoryService,
@@ -55,9 +54,8 @@ export class UserComponent implements OnInit {
     this.isCollectionModalOpen = false;
   }
 
-
   addCollection(): void {
-    if (!this.newCollection.name?.trim() ) return;
+    if (!this.newCollection.name?.trim()) return;
 
     const newCat: Category = {
       name: this.newCollection.name.trim(),
@@ -98,6 +96,7 @@ export class UserComponent implements OnInit {
     });
   }
 
+  // ✅ Kategoriye tıklayınca yönlendirme
   navigateToCategory(categoryId: string): void {
     this.router.navigate(['/category', categoryId]);
   }
@@ -105,4 +104,9 @@ export class UserComponent implements OnInit {
   trackByCollectionId(index: number, item: Category): string {
     return item._id || index.toString();
   }
+  
+  goToUser(): void {
+    this.router.navigate(['/user']);
+  }
+  
 }
