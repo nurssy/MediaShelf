@@ -10,6 +10,6 @@ const mediaItemSchema = new mongoose.Schema({
 const categorySchema = new mongoose.Schema({
   name: { type: String, required: true },
   items: [mediaItemSchema]
-});
+}, { timestamps: true });
 
 module.exports = mongoose.model('Category', categorySchema);
