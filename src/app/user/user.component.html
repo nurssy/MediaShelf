@@ -9,10 +9,15 @@
   <div class="sidebar-menu" [class.active]="isMenuOpen">
     <div class="sidebar-header">
       <div class="user-profile">
-        <div class="profile-avatar">👤</div>
+        <div class="profile-avatar" *ngIf="!(profilePicture$ | async); else avatarImage">👤</div>
+        <ng-template #avatarImage>
+          <div class="profile-avatar" [ngStyle]="{'background': 'none', 'padding':'0'}">
+            <img [src]="profilePicture$ | async" alt="Avatar" style="width:60px;height:60px;border-radius:50%;object-fit:cover;" />
+          </div>
+        </ng-template>
         <div class="user-info">
           <h3>Hoş Geldiniz</h3>
-          <p>MediaShelf Kullanıcısı</p>
+          <p>Nurssy</p>
         </div>
       </div>
       <button class="close-sidebar-btn" (click)="toggleMenu()">
@@ -60,7 +65,7 @@
         <ul class="nav-list">
           <li class="nav-item">
             <span class="nav-icon">⚙️</span>
-            <span class="nav-text">Profil Ayarları</span>
+            <span class="nav-text" (click)="goToProfileDesign()" style="cursor: pointer;">Profil Ayarları</span>
           </li>
         </ul>
       </div>

@@ -4,6 +4,8 @@ import { CategoryService, Category } from '../services/category.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router'; // <-- BUNU EKLE
+import { Observable } from 'rxjs';
+import { AuthService } from '../services/auth.service.js';
 
 @Component({
   selector: 'app-user',
@@ -21,10 +23,15 @@ export class UserComponent implements OnInit {
   isCollectionModalOpen = false;
   isDeleteCollectionModalOpen = false;
 
+  profilePicture$: Observable<string | null>;
+
   constructor(
     private categoryService: CategoryService,
-    private router: Router
-  ) {}
+    private router: Router,
+    private authService: AuthService
+  ) {
+    this.profilePicture$ = this.authService.getProfilePicture$();
+  }
 
   ngOnInit(): void {
     this.loadCategories();
@@ -108,5 +115,7 @@ export class UserComponent implements OnInit {
   goToUser(): void {
     this.router.navigate(['/user']);
   }
-  
+  goToProfileDesign(): void {
+    this.router.navigate(['/profile-design']);
+  }
 }

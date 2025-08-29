@@ -1,0 +1,90 @@
+<div class="profile-page">
+    <!-- Header Section -->
+        <div class="profile-header">
+        <div class="back-button" (click)="goBack()">
+          <span class="back-icon">←</span>
+          <span class="back-text">Geri Dön</span>
+        </div>
+        <h1 class="profile-title">👤 Profil Ayarları</h1>
+        <div class="theme-toggle" [class.dark-mode]="isDarkTheme" (click)="toggleTheme()">
+          <span class="theme-icon">{{ isDarkTheme ? '🌙' : '☀️' }}</span>
+        </div>
+      </div>
+  
+    <!-- Profile Content -->
+    <div class="profile-content">
+      <!-- Profile Picture Section -->
+      <div class="profile-picture-section">
+        <div class="profile-picture-container">
+          <div class="profile-picture" [style.background-image]="'url(' + profilePicture + ')'">
+            <div class="picture-overlay" *ngIf="!profilePicture">
+              <span class="default-avatar">👤</span>
+            </div>
+          </div>
+          <div class="picture-actions">
+            <!-- Fotoğraf yükleme butonu - sadece fotoğraf yokken veya kaydedildikten sonra -->
+            <button class="upload-btn" (click)="triggerFileUpload()" *ngIf="!profilePicture || isPhotoSaved">
+              <span class="btn-icon">📷</span>
+              <span class="btn-text">Fotoğraf Yükle</span>
+            </button>
+            
+            <!-- Kaydet ve Kaldır butonları - fotoğraf yüklendikten sonra -->
+            <div *ngIf="profilePicture && !isPhotoSaved" class="photo-action-buttons">
+              <button class="save-photo-btn" (click)="saveProfilePicture()">
+                <span class="btn-icon">💾</span>
+                <span class="btn-text">Kaydet</span>
+              </button>
+              <button class="remove-btn" (click)="removeProfilePicture()">
+                <span class="btn-icon">🗑️</span>
+                <span class="btn-text">Kaldır</span>
+              </button>
+            </div>
+          </div>
+          <input 
+            type="file" 
+            #fileInput 
+            (change)="onFileSelected($event)" 
+            accept="image/*" 
+            style="display: none;"
+          >
+        </div>
+      </div>
+  
+      <!-- Profile Information Section -->
+      <div class="profile-info-section">
+        <div class="info-card centered-card">
+          <h3 class="card-title">📝 Kişisel Bilgiler</h3>
+          <div class="form-group">
+            <label for="username">Kullanıcı Adı</label>
+            <input 
+              type="text" 
+              id="username" 
+              name="username"
+              [(ngModel)]="userProfile.username" 
+              class="form-input"
+              placeholder="Kullanıcı adınızı girin..."
+            >
+          </div>
+          <div class="form-group">
+            <label for="email">E-posta</label>
+            <input 
+              type="email" 
+              id="email" 
+              name="email"
+              [(ngModel)]="userProfile.email" 
+              class="form-input"
+              placeholder="E-posta adresinizi girin..."
+            >
+          </div>
+          
+          <!-- Action Buttons -->
+          <div class="action-buttons">
+            <button class="save-btn" (click)="saveProfile()">
+              <span class="btn-text">Değişiklikleri Kaydet</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
